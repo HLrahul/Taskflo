@@ -56,6 +56,8 @@ const config = {
       },
       backgroundImage: {
         "gradient-taskflo-button":
+          "linear-gradient(360deg, #4B36CC 0%, #837cb5 100%)",
+        "gradient-taskflo-hover-button":
           "linear-gradient(360deg, #4B36CC 0%, #9C93D4 100%)",
       },
       borderRadius: {

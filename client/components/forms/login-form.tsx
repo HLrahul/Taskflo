@@ -1,6 +1,9 @@
 "use client";
 
+import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
@@ -12,10 +15,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 
 import { loginSchema, LoginSchema } from "@/validation/loginSchema";
 
+async function handleLogin(data: LoginSchema) {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`, data);
+  return response.data;
+}
+
 export default function LoginForm() {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -24,8 +36,28 @@ export default function LoginForm() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: handleLogin,
+    onSuccess: (res) => {
+      toast({
+        title: "Logged in",
+        description: "Navigating you to dashboard...",
+      })
+
+      router.push("/dashboard");
+    },
+    onError: (res: any) => {
+      console.log(res);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong",
+        description: res.response.data.message,
+      });
+    }
+  });
+
   function onSubmit(data: LoginSchema) {
-    console.log(data);
+    mutation.mutate(data);
   }
 
   return (
@@ -61,7 +93,7 @@ export default function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full bg-gradient-taskflo-button text-white mt-3"
+          className="w-full hover:bg-gradient-taskflo-button bg-gradient-taskflo-hover-button text-white mt-3"
         >
           Login
         </Button>

@@ -34,21 +34,32 @@ export const loginHandler = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-          return res.status(400).json({ message: "User doesn't exists" });
-        }
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return res.status(400).json({ message: "User doesn't exists" });
+      }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-          return res.status(400).json({ message: "Invalid password" });
-        }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid password" });
+      }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
+      const token = jwt.sign(
+        { id: user.id },
+        process.env.JWT_SECRET as string,
+        {
           expiresIn: "1h",
-        });
+        }
+      );
 
-        res.status(200).json({ token });
+      // Set the token as an HttpOnly cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 3600000,
+      });
+
+      res.status(200).json({ message: "Login successful" });
     } catch (error) {
         res.status(500).json({ message: `Error: ${(error as Error).message}` });
     }

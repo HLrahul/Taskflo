@@ -1,8 +1,10 @@
+import dotenv from "dotenv";
 import type { Metadata } from "next";
 import { Inter, Barlow } from "next/font/google";
 
 import "./globals.css";
-import { ThemeProvider } from "./providers";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider, QueryProvider } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,6 +20,9 @@ export const metadata: Metadata = {
   description: "Todo app - Crework labs assignment",
 };
 
+// Load environment variables
+dotenv.config();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,16 +31,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="min-h-[100vh] max-w-[100%] m-auto">
-            {children}
-          </div>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="min-h-[100vh] max-w-[100%] m-auto">{children}</div>
+          </ThemeProvider>
+        </QueryProvider>
+        <Toaster />
       </body>
     </html>
   );
