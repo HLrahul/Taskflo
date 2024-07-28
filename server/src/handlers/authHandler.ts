@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 export const checkAuthHandler = async (req: Request, res: Response) => {
   const accessToken = req.cookies.accessToken;
-  console.log(accessToken);
   if (!accessToken) {
     return res.status(401).json({ message: "Access token not found" });
   }

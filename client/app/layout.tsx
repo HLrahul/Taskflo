@@ -5,7 +5,9 @@ import { Inter, Barlow } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
+import { SessionProvider, useSession } from "@/hooks/usePersistSession";
 import { ThemeProvider, QueryProvider } from "./providers";
+import LoadingScreen from "@/components/loading-screen";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,14 +35,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`}>
         <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="min-h-[100vh] max-w-[100%] m-auto">{children}</div>
-          </ThemeProvider>
+          <SessionProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="min-h-[100vh] max-w-[100%] m-auto">
+                {children}
+              </div>
+            </ThemeProvider>
+          </SessionProvider>
         </QueryProvider>
         <Toaster />
       </body>

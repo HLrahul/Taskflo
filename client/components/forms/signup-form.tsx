@@ -47,7 +47,6 @@ export default function SignUpForm() {
       })
     },
     onError: (res: any) => {
-      console.log(res);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong",

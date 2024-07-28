@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
     );
 
     const resJson = response.data;
-    console.log("resJson", resJson);
 
     if (response.status === 200) {
       cookies().set("refreshToken", resJson.refreshToken, {
