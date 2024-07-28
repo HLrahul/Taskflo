@@ -20,7 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { loginSchema, LoginSchema } from "@/validation/loginSchema";
 
 async function handleLogin(data: LoginSchema) {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`, data);
+  const response = await axios.post(`/api/login`, data);
   return response.data;
 }
 
@@ -38,7 +38,7 @@ export default function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: handleLogin,
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast({
         title: "Logged in",
         description: "Navigating you to dashboard...",
@@ -51,7 +51,7 @@ export default function LoginForm() {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong",
-        description: res.response.data.message,
+        description: res.message,
       });
     }
   });

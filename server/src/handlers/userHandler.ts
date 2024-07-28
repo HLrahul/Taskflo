@@ -44,23 +44,33 @@ export const loginHandler = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Invalid password" });
       }
 
-      const token = jwt.sign(
+      const accessToken = jwt.sign(
         { id: user.id },
         process.env.JWT_SECRET as string,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "1h" }
+      );
+      const refreshToken = jwt.sign(
+        { id: user.id },
+        process.env.REFRESH_TOKEN_SECRET as string,
+        { expiresIn: "7d" }
       );
 
-      // Set the token as an HttpOnly cookie
-      res.cookie("token", token, {
+      res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: false,
-        maxAge: 3600000,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 3600000, // 1 hour
+      });
+      res.cookie("refreshToken", refreshToken, {
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      res.status(200).json({ message: "Login successful" });
+      res
+        .status(200)
+        .json({ accessToken: accessToken, refreshToken: refreshToken, message: "Login successful" });
     } catch (error) {
-        res.status(500).json({ message: `Error: ${(error as Error).message}` });
+      res.status(500).json({ message: `Error: ${(error as Error).message}` });
     }
 }
