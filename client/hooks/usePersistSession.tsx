@@ -67,7 +67,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       hasCheckedAuth.current = true;
       handleRefreshToken();
     }
-  }, [router, toast]);
+  }, [router, setUserName, toast]);
 
   return (
     <SessionContext.Provider value={{ isLoading }}>

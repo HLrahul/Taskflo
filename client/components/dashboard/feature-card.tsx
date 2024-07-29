@@ -12,7 +12,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   featureDescription,
 }) => {
   return (
-    <div className="px-4 py-4 rounded-md flex items-center gap-3 max-w-fit h-28 sm:h-fit bg-background/100">
+    <div className="px-4 py-4 rounded-md flex items-center gap-3 max-w-fit h-28 sm:h-fit bg-background/100 cursor-pointer">
       <FeatureImage className="min-w-fit" />
       <span className="flex flex-col gap-1 max-w-fit">
         <p className="text-gray-500 text-sm font-semibold">{featureHeader}</p>

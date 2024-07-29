@@ -20,15 +20,16 @@ import ForwardIcon from "@/public/forward_icon.svg";
 import DownloadIcon from "@/public/download_icon.svg";
 import SettingsIcon from "@/public/settings_icon.svg";
 import AnalyticsIcon from "@/public/analytics_icon.svg";
+import TaksModal from "./task-modal";
 
 export default function Profile() {
   const router = useRouter();
   const { toast } = useToast();
   const { userName, setUserName } = useUser();
-  
+
   const handleLogout = async () => {
     await axios.post(`/api/logout`);
-    
+
     toast({
       title: "Logged out",
       description: "Redirecting you to login...",
@@ -36,7 +37,13 @@ export default function Profile() {
     setUserName("");
 
     router.push("/login");
-  }
+  };
+
+  const TriggerButton = (
+    <Button className="w-full bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
+      Create new task <AddIcon className="w-6 h-6 ml-2" />
+    </Button>
+  );
 
   return (
     <section className="h-full flex flex-col gap-4">
@@ -99,9 +106,7 @@ export default function Profile() {
           text="Analytics"
         />
 
-        <Button className="bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
-          Create new task <AddIcon className="w-6 h-6 ml-2" />
-        </Button>
+        <TaksModal TriggerButton={TriggerButton as React.ReactNode} />
       </div>
 
       <div className="flex items-center gap-3 p-2 rounded-md bg-foreground/5 cursor-pointer mt-auto">

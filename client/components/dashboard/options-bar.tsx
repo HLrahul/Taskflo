@@ -9,6 +9,13 @@ import FilterIcon from "@/public/filter_icon.svg";
 import SearchIcon from "@/public/search_icon.svg";
 import CalendarIcon from "@/public/calendar_icon.svg";
 import AutomationIcon from "@/public/automation_icon.svg";
+import TaksModal from "./task-modal";
+
+const TriggerButton = (
+  <Button className="w-full bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
+    Create new <AddIcon className="w-6 h-6 ml-2" />
+  </Button>
+);
 
 export default function OptionsBar () {
     return (
@@ -24,9 +31,7 @@ export default function OptionsBar () {
                 <OptionButton Icon={FilterIcon} optionName="Filter" />
                 <OptionButton Icon={ShareIcon} optionName="Share" />
 
-                <Button className="bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
-                    Create new <AddIcon className="w-6 h-6 ml-2" />
-                </Button>
+                <TaksModal TriggerButton={TriggerButton} />     
             </div>
         </section>
     )
