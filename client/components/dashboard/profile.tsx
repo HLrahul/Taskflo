@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import MenuItem from "./menu_item";
 
+import AddIcon from "@/public/add_icon.svg";
 import BellIcon from "@/public/bell_icon.svg";
 import HomeIcon from "@/public/home_icon.svg";
 import TeamsIcon from "@/public/teams_icon.svg";
@@ -40,11 +41,11 @@ export default function Profile() {
   return (
     <section className="h-full flex flex-col gap-4">
       <div className="w-full flex items-center justify-start gap-2">
-        <Avatar className="rounded-sm h-8 w-8">
+        <Avatar className="rounded-sm h-7 w-7">
           <AvatarImage src="/profile_image.png"></AvatarImage>
           <AvatarFallback>AB</AvatarFallback>
         </Avatar>
-        <p className="font-medium text-lg">{ userName }</p>
+        <p className="font-medium text-lg">{userName}</p>
       </div>
 
       <div className="w-full flex items-center justify-between">
@@ -54,21 +55,61 @@ export default function Profile() {
           <ForwardIcon className="w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
         </div>
 
-        <Button variant="ghost" className="bg-foreground/5 text-gray-500" onClick={e => {handleLogout()}}>Logout</Button>
+        <Button
+          variant="ghost"
+          className="bg-foreground/5 text-gray-500"
+          onClick={(e) => {
+            handleLogout();
+          }}
+        >
+          Logout
+        </Button>
       </div>
 
       <div className="w-full flex flex-col gap-1">
-        <MenuItem Icon={<HomeIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />} text="Home" selected={true} />
-        <MenuItem Icon={<BoardsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />} text="Boards" />
-        <MenuItem Icon={<SettingsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />} text="Settings" />
-        <MenuItem Icon={<TeamsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />} text="Teams" />
-        <MenuItem Icon={<AnalyticsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />} text="Analytics" />
+        <MenuItem
+          Icon={
+            <HomeIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
+          }
+          text="Home"
+          selected={true}
+        />
+        <MenuItem
+          Icon={
+            <BoardsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
+          }
+          text="Boards"
+        />
+        <MenuItem
+          Icon={
+            <SettingsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
+          }
+          text="Settings"
+        />
+        <MenuItem
+          Icon={
+            <TeamsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
+          }
+          text="Teams"
+        />
+        <MenuItem
+          Icon={
+            <AnalyticsIcon className="-mt-1 w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
+          }
+          text="Analytics"
+        />
+
+        <Button className="bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
+          Create new task <AddIcon className="w-6 h-6 ml-2" />
+        </Button>
       </div>
 
       <div className="flex items-center gap-3 p-2 rounded-md bg-foreground/5 cursor-pointer mt-auto">
         <DownloadIcon className="w-8 h-8 text-gray-500" />
         <div className="flex flex-col items-start justify-between">
-          <p className="text-gray-500 text-md font-semibold">Download the app</p>
+          <p className="text-gray-500 text-md font-semibold">
+            Download the app
+          </p>
           <p className="text-gray-500 text-xs">Get the full experience</p>
         </div>
       </div>

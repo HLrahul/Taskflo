@@ -11,6 +11,7 @@ import {
   ReactNode,
 } from "react";
 
+import { useUser } from "@/app/store/userContext";
 import { useToast } from "@/components/ui/use-toast";
 
 interface SessionContextProps {
@@ -33,6 +34,7 @@ export const useSession = () => {
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { toast } = useToast();
+  const { setUserName } = useUser();
 
   const hasCheckedAuth = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,6 +47,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         });
 
         if (refreshResponse.status === 200) {
+          setUserName(refreshResponse.data.userName);
           router.push("/dashboard");
         } else {
           router.push("/login");

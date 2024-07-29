@@ -1,11 +1,14 @@
-import SideMenuBar from "@/components/dashboard/side-menu-bar";
 import RequireAuth from "@/hooks/requireAuth";
 
-export default function dashBoard() {
+import SideMenuBar from "@/components/dashboard/side-menu-bar";
+import DashboardContent from "@/components/dashboard/dashboard-content";
+
+export default function DashBoard() {
     return (
         <RequireAuth>
-            <section>
+            <section className="flex">
                 <SideMenuBar />
+                <DashboardContent />
             </section>
         </RequireAuth>
     )

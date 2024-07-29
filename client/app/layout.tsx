@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/toaster";
 
 import { SessionProvider } from "@/hooks/usePersistSession";
 import { ThemeProvider, QueryProvider } from "./providers";
-import LoadingScreen from "@/components/loading-screen";
 import { UserProvider } from "./store/userContext";
 
 const inter = Inter({
@@ -36,20 +35,20 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`}>
         <QueryProvider>
-          <SessionProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <UserProvider>
+          <UserProvider>
+            <SessionProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem
+                disableTransitionOnChange
+              >
                 <div className="min-h-[100vh] max-w-[100%] m-auto">
                   {children}
                 </div>
-              </UserProvider>
-            </ThemeProvider>
-          </SessionProvider>
+              </ThemeProvider>
+            </SessionProvider>
+          </UserProvider>
         </QueryProvider>
         <Toaster />
       </body>
