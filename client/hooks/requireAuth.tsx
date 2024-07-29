@@ -15,44 +15,46 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const hasCheckedAuth = useRef(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  const checkAuth = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/check-auth`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.status === 200) {
-        toast({
-          title: "Success",
-          description: "You are authenticated",
-        });
-
-        setIsAuthenticated(true);
-      }
-    } catch (error) {
-      setIsAuthenticated(false);
-    }
-  };
-
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/check-auth`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          toast({
+            title: "Success",
+            description: "You are authenticated",
+          });
+
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
     if (!hasCheckedAuth.current) {
       hasCheckedAuth.current = true;
       checkAuth();
     }
-  });
+  }, [toast]);
 
-  if (isAuthenticated === false) {
-    toast({
-      title: "Unauthorized",
-      description: "You need to login to access your dashboard",
-    });
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      toast({
+        title: "Unauthorized",
+        description: "You need to login to access your dashboard",
+      });
+      router.push("/login");
+    }
+  }, [isAuthenticated, router, toast]);
 
-  if (isAuthenticated === null) {
+  if (isAuthenticated === null || isAuthenticated === false) {
     return <LoadingScreen />;
   }
 

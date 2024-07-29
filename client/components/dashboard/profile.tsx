@@ -1,5 +1,12 @@
+"use client";
+
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 import { ThemeToggle } from "../theme-toggle";
+import { useUser } from "@/app/store/userContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import MenuItem from "./menu_item";
@@ -14,6 +21,22 @@ import SettingsIcon from "@/public/settings_icon.svg";
 import AnalyticsIcon from "@/public/analytics_icon.svg";
 
 export default function Profile() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const { userName, setUserName } = useUser();
+  
+  const handleLogout = async () => {
+    await axios.post(`/api/logout`);
+    
+    toast({
+      title: "Logged out",
+      description: "Redirecting you to login...",
+    });
+    setUserName("");
+
+    router.push("/login");
+  }
+
   return (
     <section className="h-full flex flex-col gap-4">
       <div className="w-full flex items-center justify-start gap-2">
@@ -21,7 +44,7 @@ export default function Profile() {
           <AvatarImage src="/profile_image.png"></AvatarImage>
           <AvatarFallback>AB</AvatarFallback>
         </Avatar>
-        <p className="font-medium text-lg">User name</p>
+        <p className="font-medium text-lg">{ userName }</p>
       </div>
 
       <div className="w-full flex items-center justify-between">
@@ -31,7 +54,7 @@ export default function Profile() {
           <ForwardIcon className="w-6 h-6 text-gray-500 hover:text-black cursor-pointer" />
         </div>
 
-        <Button variant="ghost" className="bg-foreground/5 text-gray-500">Logout</Button>
+        <Button variant="ghost" className="bg-foreground/5 text-gray-500" onClick={e => {handleLogout()}}>Logout</Button>
       </div>
 
       <div className="w-full flex flex-col gap-1">
@@ -45,7 +68,7 @@ export default function Profile() {
       <div className="flex items-center gap-3 p-2 rounded-md bg-foreground/5 cursor-pointer mt-auto">
         <DownloadIcon className="w-8 h-8 text-gray-500" />
         <div className="flex flex-col items-start justify-between">
-          <p className="text-gray-500 text-lg font-semibold">Download the app</p>
+          <p className="text-gray-500 text-md font-semibold">Download the app</p>
           <p className="text-gray-500 text-xs">Get the full experience</p>
         </div>
       </div>

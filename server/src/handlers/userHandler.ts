@@ -69,7 +69,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
       res
         .status(200)
-        .json({ accessToken: accessToken, refreshToken: refreshToken, message: "Login successful" });
+        .json({ accessToken: accessToken, refreshToken: refreshToken, userName: user.username, message: "Login successful" });
     } catch (error) {
       res.status(500).json({ message: `Error: ${(error as Error).message}` });
     }

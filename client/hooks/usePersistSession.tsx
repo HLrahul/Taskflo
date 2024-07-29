@@ -10,6 +10,7 @@ import {
   useRef,
   ReactNode,
 } from "react";
+
 import { useToast } from "@/components/ui/use-toast";
 
 interface SessionContextProps {
@@ -25,6 +26,7 @@ export const useSession = () => {
   if (!context) {
     throw new Error("useSession must be used within a SessionProvider");
   }
+
   return context;
 };
 

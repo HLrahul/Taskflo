@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
+import { useUser } from "@/app/store/userContext";
 import { loginSchema, LoginSchema } from "@/validation/loginSchema";
 
 async function handleLogin(data: LoginSchema) {
@@ -27,6 +28,7 @@ async function handleLogin(data: LoginSchema) {
 export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { setUserName } = useUser();
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -38,11 +40,12 @@ export default function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: handleLogin,
-    onSuccess: () => {
+    onSuccess: (res) => {
       toast({
         title: "Logged in",
         description: "Navigating you to dashboard...",
       })
+      setUserName(res.userName);
 
       router.push("/dashboard");
     },
@@ -53,7 +56,7 @@ export default function LoginForm() {
         description: res.message,
       });
     }
-  });
+  });``
 
   function onSubmit(data: LoginSchema) {
     mutation.mutate(data);
