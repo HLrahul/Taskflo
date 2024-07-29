@@ -1,10 +1,13 @@
 "use client";
 
-import { z } from 'zod';
+import { z } from "zod";
+import { useRef } from "react";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, PlusIcon } from "@radix-ui/react-icons";
+
+import axios from "axios";
 
 import {
   Form,
@@ -31,10 +34,13 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { SheetClose } from "../ui/sheet";
 import { Calendar } from "../ui/calendar";
+import { useToast } from "../ui/use-toast";
 import { Separator } from "../ui/separator";
-import TaskInputLabel from "../dashboard/task_input_label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+
+import TaskInputLabel from "../dashboard/task_input_label";
 
 import { TaskSchema, taskSchema } from "@/validation/TaskSchema";
 
@@ -43,18 +49,72 @@ import DeadlineIcon from "@/public/calendar_icon.svg";
 import PriorityIcon from "@/public/priority_icon.svg";
 import DescriptionIcon from "@/public/description_icon.svg";
 
+const statusMap: { [key: string]: number } = {
+  todo: 1,
+  in_progress: 2,
+  under_review: 3,
+  finished: 4,
+};
+
+const priorityMap: { [key: string]: number } = {
+  unset: 0,
+  low: 1,
+  medium: 2,
+  urgent: 3,
+};
+
 export default function TaskForm() {
+  const { toast } = useToast();
   const form = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
   });
+  const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
-  function onSubmit(data: z.infer<typeof taskSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof taskSchema>) {
+    const transformedData = {
+      ...data,
+      status: statusMap[data.status],
+      priority: priorityMap[data.priority ?? "unset"],
+      description: data.description ?? "",
+      deadline: data.deadline ?? null,
+    };
+
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/add-task`,
+        transformedData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      form.reset(); 
+
+      // Close the sheet
+      if (sheetCloseRef.current) {
+        sheetCloseRef.current.click();
+      }
+
+      toast({
+        title: "Task added",
+        description: "Task has been created successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Uh oh! An error occured",
+        description: (error as Error)?.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-1 h-full">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-1 h-full"
+      >
         <FormField
           control={form.control}
           name="title"
@@ -72,7 +132,7 @@ export default function TaskForm() {
           )}
         />
 
-        <div className="mt-5 flex items-center justify-between">
+        <div className="mt-5 flex items-center justify-between  w-[70%]">
           <TaskInputLabel Icon={<StatusIcon />} text="Status" />
           <FormField
             control={form.control}
@@ -91,19 +151,19 @@ export default function TaskForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="To-do">To do</SelectItem>
-                      <SelectItem value="In Progress">In progress</SelectItem>
-                      <SelectItem value="Under Review">Under review</SelectItem>
-                      <SelectItem value="Finished">Finished</SelectItem>
+                      <SelectItem value="todo">To do</SelectItem>
+                      <SelectItem value="in_progress">In progress</SelectItem>
+                      <SelectItem value="under_review">Under review</SelectItem>
+                      <SelectItem value="finished">Finished</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <FormMessage className='ml-3'/>
+                <FormMessage className="ml-3" />
               </FormItem>
             )}
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between  w-[70%]">
           <TaskInputLabel Icon={<PriorityIcon />} text="Priority" />
           <FormField
             control={form.control}
@@ -122,9 +182,9 @@ export default function TaskForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Priority</SelectLabel>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Urgent">Urgent</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -133,7 +193,7 @@ export default function TaskForm() {
             )}
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between  w-[70%]">
           <TaskInputLabel Icon={<DeadlineIcon />} text="Deadline" />
           <FormField
             control={form.control}
@@ -159,7 +219,7 @@ export default function TaskForm() {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0" align="center">
                     <Calendar
                       mode="single"
                       selected={field.value ? new Date(field.value) : undefined}
@@ -176,13 +236,13 @@ export default function TaskForm() {
             )}
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between  w-[70%]">
           <TaskInputLabel Icon={<DescriptionIcon />} text="Description" />
           <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
-              <FormItem className='w-[50%]'>
+              <FormItem className="w-[50%]">
                 <FormControl>
                   <Input
                     placeholder="Task description"
@@ -221,7 +281,13 @@ export default function TaskForm() {
           </Tooltip>
         </TooltipProvider>
 
-        <Button type="submit" className="mt-auto">Submit</Button>
+        <Button type="submit" className="mt-auto">
+          Submit
+        </Button>
+
+        <SheetClose>
+          <Button type="button" ref={sheetCloseRef} className="hidden" />
+        </SheetClose>
       </form>
     </Form>
   );

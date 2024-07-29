@@ -5,16 +5,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const statusMap: { [key: string]: number } = {
-  "To-Do": 1,
-  "In Progress": 2,
-  "Under Review": 3,
-  "Completed": 4,
+  todo: 1,
+  in_progress: 2,
+  under_review: 3,
+  completed: 4,
 };
 
 const priorityMap: { [key: string]: number } = {
-  "Low": 1,
-  "Medium": 2,
-  "Urgent": 3,
+  unset: 0,
+  low: 1,
+  medium: 2,
+  urgent: 3,
 };
 
 interface CustomRequest extends Request {
@@ -53,8 +54,8 @@ export const addTaskHandler = async (req: CustomRequest, res: Response) => {
       data: {
         title,
         description,
-        status: statusMap[status],
-        priority: priorityMap[priority],
+        status,
+        priority,
         deadline: deadline ? new Date(deadline) : null,
         userId,
       },

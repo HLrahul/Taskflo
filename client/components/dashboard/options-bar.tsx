@@ -21,7 +21,7 @@ export default function OptionsBar () {
     return (
         <section className="flex items-center justify-between">
             <div className="flex items-center">
-                <Input placeholder="Search" className="w-fit bg-current/100" />
+                <Input placeholder="Search" className="w-fit bg-current/100 shadow-none rounded-lg" />
                 <SearchIcon className="w-6 h-6 text-gray-400 -ml-8" />
             </div>
 
