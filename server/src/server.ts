@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
 
+import { authenticate } from "./handlers/auth";
 import { loginHandler, signupHandler } from "./handlers/userHandler";
 import { checkAuthHandler, refreshHandler } from "./handlers/authHandler";
+import { addTaskHandler, editTaskHandler, getTasksHandler } from "./handlers/tasksHandler";
 
 const app = express();
 
@@ -32,6 +34,11 @@ app.post("/signup", signupHandler);
 // Auth related routes
 app.get("/refresh", refreshHandler);
 app.get("/check-auth", checkAuthHandler);
+
+// Tasks related routes
+app.get("/tasks", authenticate, getTasksHandler);
+app.post("/add-task", authenticate, addTaskHandler);
+app.put("/edit-task", authenticate, editTaskHandler);
 
 
 // Run the app
