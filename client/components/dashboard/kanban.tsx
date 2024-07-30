@@ -22,7 +22,7 @@ export default function Kanban() {
   );
 
   return (
-    <div className="h-full w-full bg-background/100 rounded-lg p-4 overflow-x-auto">
+    <div className="h-full w-full bg-background/100 rounded-lg p-4">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

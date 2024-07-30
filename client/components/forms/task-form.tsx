@@ -7,8 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, PlusIcon } from "@radix-ui/react-icons";
 
-import axios from "axios";
-
 import {
   Form,
   FormControl,
@@ -36,32 +34,19 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { SheetClose } from "../ui/sheet";
 import { Calendar } from "../ui/calendar";
-import { useToast } from "../ui/use-toast";
 import { Separator } from "../ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
+import { useTasks } from "@/app/store/tasksContext";
+
 import TaskInputLabel from "../dashboard/task_input_label";
 
-import { TaskSchema, taskSchema } from "@/validation/TaskSchema";
+import { TaskSchema, taskSchema, statusMap, priorityMap } from "@/validation/TaskSchema";
 
 import StatusIcon from "@/public/status_icon.svg";
 import DeadlineIcon from "@/public/calendar_icon.svg";
 import PriorityIcon from "@/public/priority_icon.svg";
 import DescriptionIcon from "@/public/description_icon.svg";
-
-const statusMap: { [key: string]: number } = {
-  todo: 1,
-  in_progress: 2,
-  under_review: 3,
-  finished: 4,
-};
-
-const priorityMap: { [key: string]: number } = {
-  unset: 0,
-  low: 1,
-  medium: 2,
-  urgent: 3,
-};
 
 interface TaskFormProps {
   initialStatus?: 'todo' | 'in_progress' | 'under_review' | 'finished';
@@ -69,7 +54,7 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ initialStatus, disableStatus }: TaskFormProps) {
-  const { toast } = useToast();
+  const { addTask } = useTasks();
   const form = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -79,42 +64,15 @@ export default function TaskForm({ initialStatus, disableStatus }: TaskFormProps
   const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
   async function onSubmit(data: z.infer<typeof taskSchema>) {
-    const transformedData = {
-      ...data,
-      status: statusMap[data.status],
-      priority: priorityMap[data.priority ?? "unset"],
-      description: data.description ?? "",
-      deadline: data.deadline ?? null,
-    };
-
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/add-task`,
-        transformedData,
-        {
-          withCredentials: true,
-        }
-      );
-
+      await addTask(data);
       form.reset(); 
 
       // Close the sheet
       if (sheetCloseRef.current) {
         sheetCloseRef.current.click();
       }
-
-      toast({
-        title: "Task added",
-        description: "Task has been created successfully",
-      });
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Uh oh! An error occured",
-        description: (error as Error)?.message,
-        variant: "destructive",
-      });
-    }
+    } catch (error) {}
   }
 
   return (
