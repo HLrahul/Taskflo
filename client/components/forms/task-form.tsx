@@ -41,7 +41,7 @@ import { useTasks } from "@/app/store/tasksContext";
 
 import TaskInputLabel from "../dashboard/task_input_label";
 
-import { TaskSchema, taskSchema, statusMap, priorityMap } from "@/validation/TaskSchema";
+import { Task, TaskSchema, taskSchema } from "@/validation/TaskSchema";
 
 import StatusIcon from "@/public/status_icon.svg";
 import DeadlineIcon from "@/public/calendar_icon.svg";
@@ -49,30 +49,56 @@ import PriorityIcon from "@/public/priority_icon.svg";
 import DescriptionIcon from "@/public/description_icon.svg";
 
 interface TaskFormProps {
-  initialStatus?: 'todo' | 'in_progress' | 'under_review' | 'finished';
+  initialStatus?: "todo" | "in_progress" | "under_review" | "finished";
   disableStatus?: boolean;
+  task?: Task;
 }
 
-export default function TaskForm({ initialStatus, disableStatus }: TaskFormProps) {
-  const { addTask } = useTasks();
+export default function TaskForm({
+  initialStatus,
+  disableStatus,
+  task,
+}: TaskFormProps) {
+  const { addTask, editTask } = useTasks();
+
   const form = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      status: initialStatus ?? initialStatus,
-    }
+      status: task?.status ?? initialStatus,
+      title: task?.title ?? "",
+      description: task?.description ?? undefined,
+      priority: task?.priority,
+      deadline: task?.deadline ?? undefined,
+    },
   });
   const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
-  async function onSubmit(data: z.infer<typeof taskSchema>) {
-    try {
-      await addTask(data);
-      form.reset(); 
+  function postResponse() {
+    form.reset(); // Reset the form
 
-      // Close the sheet
-      if (sheetCloseRef.current) {
-        sheetCloseRef.current.click();
+    // Close the sheet
+    if (sheetCloseRef.current) {
+      sheetCloseRef.current.click();
+    }
+  }
+
+  async function onSubmit(data : any) {
+    if (task?.id) {
+      data = { ...data, id: task.id, created_at: task.created_at } as Task;
+    } else {
+      data = data as TaskSchema;
+    }
+
+    try {
+      if (task?.id) {
+        await editTask(data);
+      } else {
+        await addTask(data);
       }
-    } catch (error) {}
+      postResponse();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (

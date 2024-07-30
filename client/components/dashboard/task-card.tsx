@@ -1,60 +1,96 @@
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 
-import { LowPriorityTag, MediumPriorityTag, UrgentPriorityTag } from "./priority-tags";
+import { Button } from "../ui/button";
+import {
+  LowPriorityTag,
+  MediumPriorityTag,
+  UrgentPriorityTag,
+} from "./priority-tags";
+
+import TaksModal from "./task-modal";
 
 import ClockIcon from "@/public/clock_icon.svg";
 
-interface TaskCardProps {
-    id: string;
-    title: string;
-    description: string;
-    deadline: string;
-    priority: number;
-    created_at: string;
-}
+import { Task } from "@/validation/TaskSchema";
+import { useRef } from "react";
 
-export default function TaskCard ({ id, title, description, deadline, priority, created_at }: TaskCardProps) {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+export default function TaskCard({
+  id,
+  status,
+  title,
+  description,
+  deadline,
+  priority,
+  created_at,
+}: Task) {
+  const editButtonRef = useRef<HTMLButtonElement | null>(null);
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const handleEditTask = () => {
+    if (editButtonRef.current) {
+      editButtonRef.current.click();
     }
+  }
 
-    const createdAtDate = new Date(created_at);
-    const deadlineDate = deadline ? new Date(deadline) : null;
-
-    return (
+  return (
+    <>
       <div
         ref={setNodeRef}
         style={style}
         {...attributes}
         {...listeners}
         className="max-h-fit w-full bg-foreground/5 border-[0.5px] border-foreground/5 p-3 flex flex-col gap-3 rounded-lg cursor-grab mt-3"
+        onClick={(e) => {
+          handleEditTask();
+        }}
       >
-        <p className="">{title}</p>
+        <p className="text-md">{title}</p>
 
         {description !== "" && (
-          <p className="text-sm text-gray-400 -mt-3">{description}</p>
+          <p className="text-xs text-gray-400 -mt-3">{description}</p>
         )}
 
-        {priority === 1 && <LowPriorityTag />}
-        {priority === 2 && <MediumPriorityTag />}
-        {priority === 3 && <UrgentPriorityTag />}
+        {priority === "low" && <LowPriorityTag />}
+        {priority === "medium" && <MediumPriorityTag />}
+        {priority === "urgent" && <UrgentPriorityTag />}
 
-        {deadlineDate && (
+        {deadline && (
           <div className="flex items-center gap-2">
             <ClockIcon className="w-6 h-6" />
-            <p className="text-xs">{deadlineDate.toDateString()}</p>
+            <p className="text-xs">{deadline.toDateString()}</p>
           </div>
         )}
 
         {created_at && (
-          <p className="text-gray-400 text-xs">
-            {createdAtDate.toDateString()}
-          </p>
+          <p className="text-gray-400 text-xs">{created_at.toDateString()}</p>
         )}
       </div>
-    );
+      <div>
+        <TaksModal
+          initialStatus={status}
+          disableStatus={true}
+          task={{
+            id,
+            title,
+            description,
+            deadline,
+            priority,
+            status,
+            created_at,
+          }}
+          TriggerButton={
+            <Button ref={editButtonRef} className="hidden"></Button>
+          }
+        />
+      </div>
+    </>
+  );
 }

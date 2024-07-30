@@ -38,7 +38,7 @@ app.get("/check-auth", checkAuthHandler);
 // Tasks related routes
 app.get("/tasks", authenticate, getTasksHandler);
 app.post("/add-task", authenticate, addTaskHandler);
-app.put("/edit-task", authenticate, editTaskHandler);
+app.put("/edit-task/:taskId", authenticate, editTaskHandler);
 
 
 // Run the app

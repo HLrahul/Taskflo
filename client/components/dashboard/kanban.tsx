@@ -22,16 +22,13 @@ export default function Kanban() {
   );
 
   return (
-    <div className="h-full w-full bg-background/100 rounded-lg p-4">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-      >
-        <div className="flex items-start justify-between gap-4">
-            <KanbanColumn id="todo" title="To Do" />
-            <KanbanColumn id="in_progress" title="In Progress" />
-            <KanbanColumn id="under_review" title="Under Review" />
-            <KanbanColumn id="finished" title="Finished" />
+    <div className="h-full w-full overflow-hidden bg-background/100 rounded-lg p-4">
+      <DndContext sensors={sensors} collisionDetection={closestCorners}>
+        <div className="h-full overflow-y-scroll flex items-start justify-between gap-4 hide-scrollbar">
+          <KanbanColumn id="todo" title="To Do" />
+          <KanbanColumn id="in_progress" title="In Progress" />
+          <KanbanColumn id="under_review" title="Under Review" />
+          <KanbanColumn id="finished" title="Finished" />
         </div>
       </DndContext>
     </div>

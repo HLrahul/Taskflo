@@ -11,22 +11,18 @@ import axios from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { priorityMap, statusMap, TaskSchema } from "@/validation/TaskSchema";
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  deadline: string;
-  priority: number;
-  created_at: string;
-  status: number;
-}
+import {
+  priorityMap,
+  statusMap,
+  Task,
+  TaskSchema,
+} from "@/validation/TaskSchema";
 
 interface TasksContextType {
   tasks: { [key: string]: Task[] };
   fetchTasks: () => void;
   addTask: (newTask: TaskSchema) => Promise<void>;
+  editTask: (updatedTaskData: Task) => Promise<void>;
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
@@ -39,6 +35,40 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   const [tasks, setTasks] = useState<{ [key: string]: Task[] }>({});
   const { toast } = useToast();
 
+  const mapStatus = (
+    status: number
+  ): "todo" | "in_progress" | "under_review" | "finished" => {
+    switch (status) {
+      case 1:
+        return "todo";
+      case 2:
+        return "in_progress";
+      case 3:
+        return "under_review";
+      case 4:
+        return "finished";
+      default:
+        throw new Error("Invalid status value");
+    }
+  };
+
+  const mapPriority = (
+    priority: number
+  ): "unset" | "low" | "medium" | "urgent" => {
+    switch (priority) {
+      case 0:
+        return "unset";
+      case 1:
+        return "low";
+      case 2:
+        return "medium";
+      case 3:
+        return "urgent";
+      default:
+        throw new Error("Invalid priority value");
+    }
+  };
+
   const fetchTasks = async () => {
     try {
       const response = await axios.get(
@@ -47,8 +77,24 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
           withCredentials: true,
         }
       );
-      setTasks(response.data);
+
+      const tasks = Object.keys(response.data).reduce(
+        (acc: { [key: string]: Task[] }, key: string) => {
+          const transformedTasks = response.data[key].map((task: any) => ({
+            ...task,
+            status: mapStatus(task.status),
+            priority: mapPriority(task.priority),
+            deadline: task.deadline ? new Date(task.deadline) : null,
+            created_at: new Date(task.created_at),
+          }));
+          return { ...acc, [key]: transformedTasks };
+        },
+        {}
+      );
+
+      setTasks(tasks);
     } catch (error) {
+      console.error(error);
       toast({
         title: "An error occurred while fetching tasks",
         description: "Try refreshing or logging in again.",
@@ -77,10 +123,22 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
       const task = response.data;
 
       setTasks((prevTasks) => {
-        const statusKey = Object.keys(statusMap).find(key => statusMap[key] === task.status) || "todo";
+        const statusKey =
+          Object.keys(statusMap).find(
+            (key) => statusMap[key] === task.status
+          ) || "todo";
+
+        const updatedTaskWithDates = {
+          ...task,
+          deadline: task.deadline ? new Date(task.deadline) : null,
+          created_at: new Date(task.created_at),
+          status: mapStatus(task.status),
+          priority: mapPriority(task.priority),
+        };
+
         return {
           ...prevTasks,
-          [statusKey]: [...(prevTasks[statusKey] || []), task],
+          [statusKey]: [...prevTasks[statusKey], updatedTaskWithDates],
         };
       });
 
@@ -89,6 +147,65 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         description: "Task has been created successfully",
       });
     } catch (error) {
+      toast({
+        title: "Uh oh! An error occured",
+        description: (error as Error)?.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const editTask = async (updatedTaskData: Task) => {
+    const transformedData = {
+      ...updatedTaskData,
+      status: statusMap[updatedTaskData.status],
+      priority: priorityMap[updatedTaskData.priority ?? "unset"],
+      description: updatedTaskData.description ?? "",
+      deadline: updatedTaskData.deadline ?? null,
+    };
+  
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/edit-task/${updatedTaskData.id}`,
+        transformedData,
+        {
+          withCredentials: true,
+        }
+      );
+      const updatedTask = response.data;
+  
+      setTasks((prevTasks) => {
+        const statusKey =
+          Object.keys(statusMap).find(
+            (key) => statusMap[key] === updatedTask.status
+          ) || "todo";
+
+        const updatedTaskWithDates = {
+          ...updatedTask,
+          deadline: updatedTask.deadline
+            ? new Date(updatedTask.deadline)
+            : null,
+          created_at: new Date(updatedTask.created_at),
+          status: mapStatus(updatedTask.status),
+          priority: mapPriority(updatedTask.priority),
+        };
+
+        return {
+          ...prevTasks,
+          [statusKey]: prevTasks[statusKey].map((task) =>
+            task.id === updatedTask.id
+              ? { ...task, ...updatedTaskWithDates }
+              : task
+          ),
+        };
+      });
+  
+      toast({
+        title: "Task updated",
+        description: "Task has been updated successfully",
+      });
+    } catch (error) {
+      console.error(error);
       toast({
         title: "Uh oh! An error occured",
         description: (error as Error)?.message,
@@ -106,7 +223,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <TasksContext.Provider value={{ tasks, fetchTasks, addTask }}>
+    <TasksContext.Provider value={{ tasks, fetchTasks, addTask, editTask }}>
       {children}
     </TasksContext.Provider>
   );

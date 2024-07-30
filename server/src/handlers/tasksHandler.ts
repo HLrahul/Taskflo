@@ -11,13 +11,6 @@ const statusMap: { [key: string]: number } = {
   finished: 4,
 };
 
-const priorityMap: { [key: string]: number } = {
-  unset: 0,
-  low: 1,
-  medium: 2,
-  urgent: 3,
-};
-
 interface CustomRequest extends Request {
   user?: any;
 }
@@ -90,7 +83,7 @@ export const editTaskHandler = async (req: CustomRequest, res: Response) => {
   }
 
   try {
-    const updatedTask = await prisma.task.updateMany({
+    const updatedTask = await prisma.task.update({
       where: {
         id: taskId,
         userId: userId,
@@ -98,19 +91,19 @@ export const editTaskHandler = async (req: CustomRequest, res: Response) => {
       data: {
         title,
         description,
-        status: statusMap[status],
-        priority: priorityMap[priority],
+        status: status,
+        priority: priority,
         deadline: deadline ? new Date(deadline) : null,
       },
     });
 
-    if (updatedTask.count === 0) {
+    if (!updatedTask) {
       return res
         .status(404)
         .json({ message: "Task not found." });
     }
 
-    res.status(200).json({ message: "Task updated successfully." });
+    res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: `Error: ${(error as Error).message}` });
   }

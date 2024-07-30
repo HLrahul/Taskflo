@@ -14,6 +14,16 @@ export const priorityMap: { [key: string]: number } = {
   urgent: 3,
 };
 
+export interface Task {
+  id: string;
+  status: "todo" | "in_progress" | "under_review" | "finished";
+  title: string;
+  description: string | null;
+  deadline: Date | undefined;
+  priority: "unset" | "low" | "medium" | "urgent";
+  created_at: Date;
+}
+
 export const taskSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
     description: z.string().min(10, "Description must be at least 10 characters long").optional(),

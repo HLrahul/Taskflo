@@ -30,23 +30,24 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title }) => {
         <p className="text-xl text-gray-600">{title}</p>
         <ColumnOptionsIcon className="w-6 h-6 cursor-pointer" />
       </div>
-      <SortableContext
-        id={id}
-        items={tasks[id] || []}
-        strategy={verticalListSortingStrategy}
-      >
-        {(tasks[id] || []).map((task) => (
-          <TaskCard
-            key={task.id}
-            id={task.id}
-            title={task.title}
-            description={task.description}
-            deadline={task.deadline}
-            created_at={task.created_at}
-            priority={task.priority}
-          />
-        ))}
-      </SortableContext>
+        <SortableContext
+          id={id}
+          items={tasks[id] || []}
+          strategy={verticalListSortingStrategy}
+        >
+          {(tasks[id] || []).map((task) => (
+            <TaskCard
+              key={task.id}
+              status={task.status}
+              id={task.id}
+              title={task.title}
+              description={task.description}
+              deadline={task.deadline}
+              created_at={task.created_at}
+              priority={task.priority}
+            />
+          ))}
+        </SortableContext>
 
       <TaksModal
         initialStatus={id}

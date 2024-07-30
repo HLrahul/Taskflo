@@ -17,13 +17,16 @@ import FavouritesIcon from "@/public/favourites_icon.svg";
 
 import TaskForm from "../forms/task-form";
 
+import { Task } from "@/validation/TaskSchema";
+
 interface TaksModalProps {
   TriggerButton: React.ReactNode;
   initialStatus?: 'todo' | 'in_progress' | 'under_review' | 'finished';
   disableStatus?: boolean;
+  task?: Task;
 }
 
-const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton, initialStatus, disableStatus }) => {
+const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton, initialStatus, disableStatus, task }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>{TriggerButton}</SheetTrigger>
@@ -46,7 +49,7 @@ const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton, initialStatus, dis
           </div>
         </div>
 
-        <TaskForm initialStatus={initialStatus} disableStatus={disableStatus} />
+        <TaskForm initialStatus={initialStatus} disableStatus={disableStatus} task={task} />
       </SheetContent>
     </Sheet>
   );
