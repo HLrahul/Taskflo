@@ -23,6 +23,7 @@ interface TasksContextType {
   fetchTasks: () => void;
   addTask: (newTask: TaskSchema) => Promise<void>;
   editTask: (updatedTaskData: Task) => Promise<void>;
+  setTasks: React.Dispatch<React.SetStateAction<{ [key: string]: Task[] }>>;
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
@@ -223,7 +224,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <TasksContext.Provider value={{ tasks, fetchTasks, addTask, editTask }}>
+    <TasksContext.Provider value={{ tasks, fetchTasks, addTask, editTask, setTasks }}>
       {children}
     </TasksContext.Provider>
   );
