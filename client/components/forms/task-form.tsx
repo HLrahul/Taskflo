@@ -63,10 +63,18 @@ const priorityMap: { [key: string]: number } = {
   urgent: 3,
 };
 
-export default function TaskForm() {
+interface TaskFormProps {
+  initialStatus?: 'todo' | 'in_progress' | 'under_review' | 'finished';
+  disableStatus?: boolean;
+}
+
+export default function TaskForm({ initialStatus, disableStatus }: TaskFormProps) {
   const { toast } = useToast();
   const form = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
+    defaultValues: {
+      status: initialStatus ?? initialStatus,
+    }
   });
   const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
@@ -142,6 +150,7 @@ export default function TaskForm() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={disableStatus}
                 >
                   <FormControl>
                     <SelectTrigger className="border-0 bg-transparent shadow-none focus:ring-0">

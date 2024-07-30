@@ -28,10 +28,9 @@ export default function Kanban() {
         collisionDetection={closestCorners}
       >
         <div className="flex items-start justify-between gap-4">
-            {/* Columns */}
-            <KanbanColumn id="to-do" title="To Do" />
-            <KanbanColumn id="in-progress" title="In Progress" />
-            <KanbanColumn id="under-review" title="Under Review" />
+            <KanbanColumn id="todo" title="To Do" />
+            <KanbanColumn id="in_progress" title="In Progress" />
+            <KanbanColumn id="under_review" title="Under Review" />
             <KanbanColumn id="finished" title="Finished" />
         </div>
       </DndContext>

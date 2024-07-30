@@ -1,7 +1,14 @@
 import React from "react";
 
 import { OptionButton } from "./option-button";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 
 import ShareIcon from "@/public/share_icon.svg";
 import CloseIcon from "@/public/close_icon.svg";
@@ -12,15 +19,17 @@ import TaskForm from "../forms/task-form";
 
 interface TaksModalProps {
   TriggerButton: React.ReactNode;
+  initialStatus?: 'todo' | 'in_progress' | 'under_review' | 'finished';
+  disableStatus?: boolean;
 }
 
-const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton }) => {
+const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton, initialStatus, disableStatus }) => {
   return (
     <Sheet>
-      <SheetTrigger>{TriggerButton}</SheetTrigger>
+      <SheetTrigger asChild>{TriggerButton}</SheetTrigger>
       <SheetContent className="flex flex-col gap-5 w-[40vw]">
         <SheetHeader>
-            <SheetTitle></SheetTitle>
+          <SheetTitle></SheetTitle>
         </SheetHeader>
 
         <div className="flex items-center justify-between -mt-5">
@@ -37,7 +46,7 @@ const TaksModal: React.FC<TaksModalProps> = ({ TriggerButton }) => {
           </div>
         </div>
 
-        <TaskForm />
+        <TaskForm initialStatus={initialStatus} disableStatus={disableStatus} />
       </SheetContent>
     </Sheet>
   );

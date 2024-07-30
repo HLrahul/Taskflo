@@ -12,7 +12,7 @@ import AutomationIcon from "@/public/automation_icon.svg";
 import TaksModal from "./task-modal";
 
 const TriggerButton = (
-  <Button className="w-full bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
+  <Button className="w-fit bg-gradient-taskflo-button hover:bg-gradient-taskflo-hover-button text-white">
     Create new <AddIcon className="w-6 h-6 ml-2" />
   </Button>
 );

@@ -1,8 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 
 import {
-    SortableContext,
-    verticalListSortingStrategy,
+  SortableContext,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { PlusIcon } from "@radix-ui/react-icons";
 
@@ -11,9 +11,10 @@ import { Button } from "../ui/button";
 import TaskCard from "./task-card";
 
 import ColumnOptionsIcon from "@/public/column_options_icon.svg";
+import TaksModal from "./task-modal";
 
 interface KanbanColumnProps {
-  id: string;
+  id: "todo" | "in_progress" | "under_review" | "finished";
   title: string;
 }
 
@@ -53,10 +54,17 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title }) => {
             priority={task.priority}
           />
         ))}
-        <Button className="mt-3 w-full flex items-center justify-between">
-          Add new
-          <PlusIcon className="w-5 h-5 text-background" />
-        </Button>
+
+        <TaksModal
+          initialStatus={id}
+          disableStatus={true}
+          TriggerButton={
+            <Button className="mt-3 w-full flex items-center justify-between">
+              Add new
+              <PlusIcon className="w-5 h-5 text-background" />
+            </Button>
+          }
+        />
       </SortableContext>
     </section>
   );

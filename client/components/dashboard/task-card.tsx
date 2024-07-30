@@ -13,10 +13,10 @@ interface TaskCardProps {
 
 export default function TaskCard ({ id, title, description, deadline, priority, created_at }: TaskCardProps) {
     return (
-        <div className="h-fit w-full bg-foreground/5 border-[0.5px] border-foreground/5 p-3 flex flex-col gap-3 rounded-lg">
+        <div className="h-fit w-full bg-foreground/5 border-[0.5px] border-foreground/5 p-3 flex flex-col gap-3 rounded-lg cursor-grab">
             <p className="">{title}</p>
             
-            { description !== "" && <p className="text-sm text-gray-400 -mt-2">
+            { description !== "" && <p className="text-sm text-gray-400 -mt-4">
                 {description}
             </p> }
 
