@@ -26,11 +26,6 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
         );
 
         if (response.status === 200) {
-          toast({
-            title: "Success",
-            description: "You are authenticated",
-          });
-
           setIsAuthenticated(true);
         }
       } catch (error) {
@@ -52,7 +47,8 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
       });
       router.push("/login");
     }
-  }, [isAuthenticated, router, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   if (isAuthenticated === null || isAuthenticated === false) {
     return <LoadingScreen />;

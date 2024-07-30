@@ -67,7 +67,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       hasCheckedAuth.current = true;
       handleRefreshToken();
     }
-  }, [router, setUserName, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SessionContext.Provider value={{ isLoading }}>

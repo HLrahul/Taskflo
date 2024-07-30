@@ -34,9 +34,9 @@ export default function Profile() {
       title: "Logged out",
       description: "Redirecting you to login...",
     });
-    setUserName("");
-
+    
     router.push("/login");
+    setUserName("");
   };
 
   const TriggerButton = (

@@ -6,7 +6,7 @@ import AccessAnywhereImage from "@/public/access_anywhere_image.svg";
 
 export default function Features () {
     return (
-      <section className="w-full flex items-center justify-start gap-2">
+      <section className="w-full flex items-center justify-start gap-4">
         <FeatureCard
           featureImage={TagsImage}
           featureHeader="Tagging System"

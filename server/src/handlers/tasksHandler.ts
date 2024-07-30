@@ -8,7 +8,7 @@ const statusMap: { [key: string]: number } = {
   todo: 1,
   in_progress: 2,
   under_review: 3,
-  completed: 4,
+  finished: 4,
 };
 
 const priorityMap: { [key: string]: number } = {
@@ -35,7 +35,21 @@ export const getTasksHandler = async (req: CustomRequest, res: Response) => {
       },
     });
 
-    res.status(200).json(tasks);
+    const groupedTasks = Object.keys(statusMap).reduce((acc, key) => {
+      acc[key] = [];
+      return acc;
+    }, {} as { [key: string]: typeof tasks });
+
+    tasks.forEach((task) => {
+      const statusKey = Object.keys(statusMap).find(
+        (key) => statusMap[key] === task.status
+      );
+      if (statusKey) {
+        groupedTasks[statusKey].push(task);
+      }
+    });
+
+    res.status(200).json(groupedTasks);
   } catch (error) {
     res.status(500).json({ message: `Error: ${(error as Error).message}` });
   }

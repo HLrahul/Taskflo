@@ -1,5 +1,6 @@
 import Features from "./features";
 import Greeting from "./greeting";
+import Kanban from "./kanban";
 import OptionsBar from "./options-bar";
 
 export default function DashboardContent () {
@@ -9,6 +10,7 @@ export default function DashboardContent () {
         <Features />
 
         <OptionsBar />
+        <Kanban />
       </section>
     );
 }
