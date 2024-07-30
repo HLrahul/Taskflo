@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   closestCorners,
   DndContext,
@@ -21,8 +21,10 @@ import { Task } from "@/validation/TaskSchema";
 import { useTasks } from "@/app/store/tasksContext";
 
 export default function Kanban() {
-  const { tasks, setTasks } = useTasks();
+  const isEditCalled = useRef(false);
+  const { tasks, setTasks, editTask } = useTasks();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -38,6 +40,8 @@ export default function Kanban() {
       .flat()
       .find((task) => task.id === id);
     setActiveTask(task || null);
+
+    isEditCalled.current = false;
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -80,9 +84,23 @@ export default function Kanban() {
           (task) => task.id !== activeId
         );
         let overItems = prevTasks[overColumn] || [];
+
+        const updatedTask = {
+          ...activeTask,
+          status: overColumn.toString() as
+            | "todo"
+            | "in_progress"
+            | "under_review"
+            | "finished",
+        };
+        if (!isEditCalled.current) {
+          editTask(updatedTask, true);
+          isEditCalled.current = true;
+        }
+
         if (activeColumn !== overColumn) {
           overItems = prevTasks[overColumn]
-            ? [...prevTasks[overColumn], activeTask]
+            ? [...prevTasks[overColumn], updatedTask]
             : [activeTask];
         }
 

@@ -91,7 +91,7 @@ export default function TaskForm({
 
     try {
       if (task?.id) {
-        await editTask(data);
+        await editTask(data, false);
       } else {
         await addTask(data);
       }

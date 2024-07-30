@@ -2,7 +2,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useDroppable } from "@dnd-kit/core";
+import { DragEndEvent, useDroppable } from "@dnd-kit/core";
 import { PlusIcon } from "@radix-ui/react-icons";
 
 import { Button } from "../ui/button";
@@ -22,34 +22,34 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title }) => {
   const { tasks, setTasks } = useTasks();
   const { setNodeRef } = useDroppable({ id });
 
-  const handleDrop = (event: { active: any; over: any }) => {
-    const { active, over } = event;
-    if (!over) return;
+ const handleDrop = (event: any) => {
+   const { active, over } = event;
+   const { id: sourceId } = active;
+   const { id: destinationId } = over;
 
-    const { id: sourceId } = active;
-    const { id: destinationId } = over;
+   setTasks((prevTasks) => {
+     const updatedTasks = { ...prevTasks };
+     const sourceColumn = updatedTasks[sourceId];
+     const destinationColumn = updatedTasks[destinationId];
 
-    if (sourceId !== destinationId) {
-      setTasks((prevTasks) => {
-        const sourceColumn = prevTasks[sourceId];
-        const destinationColumn = prevTasks[destinationId];
+     if (sourceId === destinationId) {
+       const sourceIndex = sourceColumn.findIndex(
+         (task) => task.id === active.id
+       );
+       const destinationIndex = destinationColumn.findIndex(
+         (task) => task.id === over.id
+       );
 
-        const sourceIndex = sourceColumn.findIndex(
-          (task) => task.id === active.id
-        );
-        const [draggedItem] = sourceColumn.splice(sourceIndex, 1);
+       const [movedTask] = sourceColumn.splice(sourceIndex, 1);
+       sourceColumn.splice(destinationIndex, 0, movedTask);
+     }
 
-        const newTasks = { ...prevTasks };
-        newTasks[sourceId] = sourceColumn;
-        newTasks[destinationId] = [...destinationColumn, draggedItem];
-
-        return newTasks;
-      });
-    }
-  };
+     return updatedTasks;
+   });
+ };
 
   return (
-    <section className="max-h-fit w-full p-2" ref={setNodeRef}>
+    <section className="max-h-fit w-full p-2" ref={setNodeRef} onDrop={handleDrop}>
       <div className="flex items-center justify-between mb-2">
         <p className="text-xl text-gray-600">{title}</p>
         <ColumnOptionsIcon className="w-6 h-6 cursor-pointer" />

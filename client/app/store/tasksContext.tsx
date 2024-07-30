@@ -22,7 +22,7 @@ interface TasksContextType {
   tasks: { [key: string]: Task[] };
   fetchTasks: () => void;
   addTask: (newTask: TaskSchema) => Promise<void>;
-  editTask: (updatedTaskData: Task) => Promise<void>;
+  editTask: (updatedTaskData: Task, fromKanban: boolean) => Promise<void>;
   setTasks: React.Dispatch<React.SetStateAction<{ [key: string]: Task[] }>>;
 }
 
@@ -156,7 +156,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const editTask = async (updatedTaskData: Task) => {
+  const editTask = async (updatedTaskData: Task, fromKanban: boolean) => {
     const transformedData = {
       ...updatedTaskData,
       status: statusMap[updatedTaskData.status],
@@ -201,10 +201,16 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       });
   
-      toast({
-        title: "Task updated",
-        description: "Task has been updated successfully",
-      });
+      if (!fromKanban) {
+        toast({
+          title: "Task updated",
+          description: "Task has been updated successfully",
+        });
+      } else {
+        toast({
+          description: "Task has been moved successfully",
+        })
+      }
     } catch (error) {
       console.error(error);
       toast({
