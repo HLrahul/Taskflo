@@ -58,7 +58,7 @@ export default function TaskForm({
   disableStatus,
   task,
 }: TaskFormProps) {
-  const { addTask, editTask } = useTasks();
+  const { addTask, editTask, deleteTask } = useTasks();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,6 +81,19 @@ export default function TaskForm({
     // Close the sheet
     if (sheetCloseRef.current) {
       sheetCloseRef.current.click();
+    }
+  }
+
+  async function handleDeleteTask(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+  
+    try {
+      if (task) {
+        await deleteTask(task.id);
+        postResponse();
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -278,10 +291,26 @@ export default function TaskForm({
           </Tooltip>
         </TooltipProvider>
 
-        <Button type="submit" className="mt-auto" disabled={isLoading}>
-          {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-          Submit
-        </Button>
+        <div className="mt-auto flex flex-col gap-2">
+          {task?.id && (
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isLoading}
+              onClick={(e) => handleDeleteTask(e)}
+            >
+              {isLoading && (
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Delete task
+            </Button>
+          )}
+
+          <Button type="submit" className="mt-auto" disabled={isLoading}>
+            {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+            {task?.id ? "Save changes" : "Add task"}
+          </Button>
+        </div>
 
         <SheetClose>
           <Button type="button" ref={sheetCloseRef} className="hidden" />
@@ -290,3 +319,4 @@ export default function TaskForm({
     </Form>
   );
 }
+

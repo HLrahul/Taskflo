@@ -108,3 +108,29 @@ export const editTaskHandler = async (req: CustomRequest, res: Response) => {
     res.status(500).json({ message: `Error: ${(error as Error).message}` });
   }
 };
+
+export const deleteTaskHandler = async (req: CustomRequest, res: Response) => {
+  const { taskId } = req.params;
+
+  const userId = req.user?.id;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID not found in token." });
+  }
+
+  try {
+    const deletedTask = await prisma.task.delete({
+      where: {
+        id: taskId,
+        userId: userId,
+      },
+    });
+
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    res.status(200).json({ message: "Task deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: `Error: ${(error as Error).message}` });
+  }
+};

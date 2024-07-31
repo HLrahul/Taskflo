@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { authenticate } from "./handlers/auth";
 import { loginHandler, signupHandler } from "./handlers/userHandler";
 import { checkAuthHandler, refreshHandler } from "./handlers/authHandler";
-import { addTaskHandler, editTaskHandler, getTasksHandler } from "./handlers/tasksHandler";
+import { addTaskHandler, deleteTaskHandler, editTaskHandler, getTasksHandler } from "./handlers/tasksHandler";
 
 const app = express();
 
@@ -39,6 +39,7 @@ app.get("/check-auth", checkAuthHandler);
 app.get("/tasks", authenticate, getTasksHandler);
 app.post("/add-task", authenticate, addTaskHandler);
 app.put("/edit-task/:taskId", authenticate, editTaskHandler);
+app.delete("/delete-task/:taskId", authenticate, deleteTaskHandler);
 
 
 // Run the app

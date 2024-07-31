@@ -23,6 +23,7 @@ interface TasksContextType {
   fetchTasks: () => void;
   addTask: (newTask: TaskSchema) => Promise<void>;
   editTask: (updatedTaskData: Task, fromKanban: boolean) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<void>;
   setTasks: React.Dispatch<React.SetStateAction<{ [key: string]: Task[] }>>;
 }
 
@@ -221,6 +222,39 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const deleteTask = async (taskId: string) => {
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/delete-task/${taskId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setTasks((prevTasks) => {
+        const updatedTasks = { ...prevTasks };
+        Object.keys(updatedTasks).forEach((statusKey) => {
+          updatedTasks[statusKey] = updatedTasks[statusKey].filter(
+            (task) => task.id !== taskId
+          );
+        });
+        return updatedTasks;
+      });
+
+      toast({
+        title: "Task deleted",
+        description: "Task has been deleted successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Uh oh! An error occured",
+        description: (error as Error)?.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     if (!loadRef.current) {
       fetchTasks();
@@ -230,7 +264,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <TasksContext.Provider value={{ tasks, fetchTasks, addTask, editTask, setTasks }}>
+    <TasksContext.Provider value={{ tasks, fetchTasks, addTask, editTask, setTasks, deleteTask }}>
       {children}
     </TasksContext.Provider>
   );
