@@ -19,7 +19,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? "none" : transition,
+    transition:  transition || "transform 250ms ease",
     zIndex: isDragging ? 1000 : undefined,
   };
 
