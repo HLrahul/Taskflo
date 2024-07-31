@@ -5,8 +5,6 @@ import { Inter, Barlow } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-import Footer from "@/components/footer";
-
 import { UserProvider } from "./store/userContext";
 import { ThemeProvider, QueryProvider } from "./providers";
 import { SessionProvider } from "@/hooks/usePersistSession";
@@ -22,7 +20,7 @@ const barlow = Barlow({
 
 export const metadata: Metadata = {
   title: "Taskflo - Rahul",
-  description: "Todo app - Crework labs assignment",
+  description: "Task management - Crework labs assignment",
 };
 
 // Load environment variables
@@ -35,6 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/creworks_logo.png" />
+      </head>
       <body className={`${inter.className}`}>
         <QueryProvider>
           <UserProvider>
