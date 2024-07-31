@@ -2,7 +2,9 @@
 
 import axios from "axios";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -28,6 +30,8 @@ async function handleSignUp(data: SignUpSchema) {
 export default function SignUpForm() {
   const { toast } = useToast();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -42,9 +46,16 @@ export default function SignUpForm() {
     onSuccess: (res) => {
       toast({
         title: "Account created",
-        description: res.response.data.message,
-        action: <ToastAction altText="Login"><Link href='/login'>Login</Link></ToastAction>,
-      })
+        description: "Login to access your dashboard",
+        action: (
+          <ToastAction altText="Login">
+            <Link href="/login">Login</Link>
+          </ToastAction>
+        ),
+      });
+
+      form.reset();
+      setIsLoading(false);
     },
     onError: (res: any) => {
       toast({
@@ -52,10 +63,12 @@ export default function SignUpForm() {
         title: "Uh oh! Something went wrong",
         description: res.response.data.message,
       });
+      setIsLoading(false);
     }
   });
 
   function onSubmit(data: SignUpSchema) {
+    setIsLoading(true);
     mutation.mutate(data);
   }
 
@@ -103,9 +116,11 @@ export default function SignUpForm() {
         />
 
         <Button
+          disabled={isLoading}
           type="submit"
           className="w-full hover:bg-gradient-taskflo-button bg-gradient-taskflo-hover-button text-white mt-3"
         >
+          { isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> }
           Sign up
         </Button>
       </form>

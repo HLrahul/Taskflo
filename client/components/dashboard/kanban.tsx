@@ -93,12 +93,12 @@ export default function Kanban() {
             | "under_review"
             | "finished",
         };
-        if (!isEditCalled.current) {
-          editTask(updatedTask, true);
-          isEditCalled.current = true;
-        }
-
         if (activeColumn !== overColumn) {
+          if (!isEditCalled.current) {
+            editTask(updatedTask, true);
+            isEditCalled.current = true;
+          }
+
           overItems = prevTasks[overColumn]
             ? [...prevTasks[overColumn], updatedTask]
             : [activeTask];

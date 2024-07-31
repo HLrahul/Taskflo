@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useDraggable } from "@dnd-kit/core";
 
@@ -13,6 +13,7 @@ import TaksModal from "./task-modal";
 
 import { Task } from "@/validation/TaskSchema";
 
+import EditIcon from "@/public/edit_icon.svg";
 import ClockIcon from "@/public/clock_icon.svg";
 
 export default function TaskCard({
@@ -24,7 +25,8 @@ export default function TaskCard({
   priority,
   created_at,
 }: Task) {
-  const editButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id });
   const style = {
@@ -36,13 +38,15 @@ export default function TaskCard({
     }),
     transition: isDragging ? "none" : "transform 0.2s ease",
   };
-  const handleEditTask = () => {
-    if (editButtonRef.current) {
-      editButtonRef.current.click();
-    }
-  };
+
   return (
-    <>
+    <section
+      className={`flex items-start relative ${
+        status === "finished" ? "flex-row-reverse" : ""
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div
         ref={setNodeRef}
         style={style}
@@ -51,9 +55,6 @@ export default function TaskCard({
         className={`max-h-fit w-full bg-foreground/5 border-[0.5px] border-foreground/5 p-3 flex flex-col gap-3 rounded-lg cursor-grab mt-3 ${
           isDragging ? "min-h-min scale-x-0 scale-y-0" : ""
         }`}
-        onClick={(e) => {
-          handleEditTask();
-        }}
       >
         <p className="text-md">{title}</p>
         {description !== "" && (
@@ -72,24 +73,32 @@ export default function TaskCard({
           <p className="text-gray-400 text-xs">{created_at.toDateString()}</p>
         )}
       </div>
-      <div>
-        <TaksModal
-          initialStatus={status}
-          disableStatus={true}
-          task={{
-            id,
-            title,
-            description,
-            deadline,
-            priority,
-            status,
-            created_at,
-          }}
-          TriggerButton={
-            <Button ref={editButtonRef} className="hidden"></Button>
-          }
-        />
-      </div>
-    </>
+      {isHovered && (
+        <div>
+          <TaksModal
+            initialStatus={status}
+            disableStatus={true}
+            task={{
+              id,
+              title,
+              description,
+              deadline,
+              priority,
+              status,
+              created_at,
+            }}
+            TriggerButton={
+              <div
+                className={`absolute bg-transparent outline-none border-none shadow-none mt-3 p-1 hover:bg-white rounded-lg ${
+                  isHovered ? "bg-white" : ""
+                } ${status === "finished" ? "-ml-6 mt-4" : ""}`}
+              >
+                <EditIcon className="w-fit h-fit flex items-start justify-start text-white" />
+              </div>
+            }
+          />
+        </div>
+      )}
+    </section>
   );
 }
