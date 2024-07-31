@@ -25,11 +25,13 @@ export async function POST(req: NextRequest) {
       cookies().set("refreshToken", resJson.refreshToken, {
         httpOnly: true,
         secure: process.env.NEXT_PUBLIC_ENV === "production",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60, // 7 days
       });
       cookies().set("accessToken", resJson.accessToken, {
         httpOnly: true,
         secure: process.env.NEXT_PUBLIC_ENV === "production",
+        sameSite: "none",
         maxAge: 60 * 60, // 1 hour
       });
 
