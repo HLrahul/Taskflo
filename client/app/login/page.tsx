@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import AuthCard from "@/components/auth-card";
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
           <AuthCard type="login" />
         </section>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -5,9 +5,11 @@ import { Inter, Barlow } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-import { SessionProvider } from "@/hooks/usePersistSession";
-import { ThemeProvider, QueryProvider } from "./providers";
+import Footer from "@/components/footer";
+
 import { UserProvider } from "./store/userContext";
+import { ThemeProvider, QueryProvider } from "./providers";
+import { SessionProvider } from "@/hooks/usePersistSession";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,7 +45,7 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
-                <div className="min-h-[100vh] max-w-[100%] m-auto">
+                <div className="min-h-[100vh] max-w-[100%]">
                   {children}
                 </div>
               </ThemeProvider>
