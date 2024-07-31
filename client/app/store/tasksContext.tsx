@@ -74,7 +74,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchTasks = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
+        `api/task`,
         {
           withCredentials: true,
         }
@@ -116,7 +116,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/add-task`,
+        `api/task`,
         transformedData,
         {
           withCredentials: true,
@@ -168,7 +168,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/edit-task/${updatedTaskData.id}`,
+        `api/task/?taskId=${updatedTaskData.id}`,
         transformedData,
         {
           withCredentials: true,
@@ -225,7 +225,7 @@ export const TasksProvider: React.FC<{ children: React.ReactNode }> = ({
   const deleteTask = async (taskId: string) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/delete-task/${taskId}`,
+        `api/task/?taskId=${taskId}`,
         {
           withCredentials: true,
         }

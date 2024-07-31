@@ -18,12 +18,9 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/check-auth`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`api/check-auth`, {
+          withCredentials: true,
+        });
 
         if (response.status === 200) {
           setIsAuthenticated(true);
@@ -47,7 +44,7 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
       });
       router.push("/login");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   if (isAuthenticated === null || isAuthenticated === false) {

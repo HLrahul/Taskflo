@@ -4,8 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
+      `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
+      {
         withCredentials: true,
+        headers: {
+          Cookie: req.headers.get("cookie"),
+        },
       }
     );
 
@@ -35,7 +39,13 @@ export async function POST(req: NextRequest) {
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/add-task`,
-      body
+      body,
+      {
+        withCredentials: true,
+        headers: {
+          Cookie: req.headers.get("cookie"),
+        },
+      }
     );
 
     return new NextResponse(JSON.stringify(response.data), {
@@ -58,14 +68,22 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest & { query?: { taskId: string } }) {
+export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { taskId } = req.query || {};
+
+    const { searchParams } = new URL(req.url);
+    const taskId = searchParams.get("taskId");
 
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_API_URL}/edit-task/${taskId}`,
-      body
+      body,
+      {
+        withCredentials: true,
+        headers: {
+          Cookie: req.headers.get("cookie"),
+        },
+      }
     );
 
     return new NextResponse(JSON.stringify(response.data), {
@@ -88,12 +106,19 @@ export async function PUT(req: NextRequest & { query?: { taskId: string } }) {
   }
 }
 
-export async function DELETE(req: NextRequest & { query?: { taskId: string } }) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { taskId } = req.query || {};
+    const { searchParams } = new URL(req.url);
+    const taskId = searchParams.get("taskId");
 
     const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/delete-task/${taskId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/delete-task/${taskId}`,
+      {
+        withCredentials: true,
+        headers: {
+          Cookie: req.headers.get("cookie"),
+        },
+      }
     );
 
     return new NextResponse(JSON.stringify(response.data), {
