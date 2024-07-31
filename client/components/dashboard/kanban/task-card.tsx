@@ -67,11 +67,15 @@ export default function TaskCard({
           {deadline && (
             <div className="flex items-center gap-2">
               <ClockIcon className="w-6 h-6" />
-              <p className="text-xs">{deadline.toDateString()}</p>
+              <p className="text-xs text-gray-600 font-semibold">
+                {deadline.toLocaleDateString("en-CA")}
+              </p>
             </div>
           )}
           {created_at && (
-            <p className="text-gray-400 text-xs">{created_at.toDateString()}</p>
+            <p className="text-gray-400 text-xs">
+              {created_at.toLocaleDateString("en-CA")}
+            </p>
           )}
         </div>
       </SortableItem>
