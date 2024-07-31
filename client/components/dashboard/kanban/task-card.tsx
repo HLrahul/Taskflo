@@ -2,19 +2,26 @@ import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useDraggable } from "@dnd-kit/core";
 
-import { Button } from "../ui/button";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+
 import {
   LowPriorityTag,
   MediumPriorityTag,
   UrgentPriorityTag,
-} from "./priority-tags";
+} from "../priority-tags";
 
-import TaksModal from "./task-modal";
+import TaksModal from "../task-modal";
 
 import { Task } from "@/validation/TaskSchema";
 
 import EditIcon from "@/public/edit_icon.svg";
 import ClockIcon from "@/public/clock_icon.svg";
+
 
 export default function TaskCard({
   id,
@@ -74,30 +81,37 @@ export default function TaskCard({
         )}
       </div>
       {isHovered && (
-        <div>
-          <TaksModal
-            initialStatus={status}
-            disableStatus={true}
-            task={{
-              id,
-              title,
-              description,
-              deadline,
-              priority,
-              status,
-              created_at,
-            }}
-            TriggerButton={
-              <div
-                className={`absolute bg-transparent outline-none border-none shadow-none mt-3 p-1 hover:bg-white rounded-lg ${
-                  isHovered ? "bg-white" : ""
-                } ${status === "finished" ? "-ml-6 mt-4" : ""}`}
-              >
-                <EditIcon className="w-fit h-fit flex items-start justify-start text-white" />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div>
+                <TaksModal
+                  initialStatus={status}
+                  disableStatus={true}
+                  task={{
+                    id,
+                    title,
+                    description,
+                    deadline,
+                    priority,
+                    status,
+                    created_at,
+                  }}
+                  TriggerButton={
+                    <div
+                      className={`absolute bg-transparent outline-none border-none shadow-none mt-3 p-1 hover:bg-white rounded-lg ${
+                        isHovered ? "bg-white" : ""
+                      } ${status === "finished" ? "-ml-6 mt-5" : ""}`}
+                    >
+                      <EditIcon className="w-fit h-fit flex items-start justify-start text-white" />
+                    </div>
+                  }
+                />
               </div>
-            }
-          />
-        </div>
+            </TooltipTrigger>
+            <TooltipContent>Edit task</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </section>
   );

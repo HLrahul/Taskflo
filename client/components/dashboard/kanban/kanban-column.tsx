@@ -2,14 +2,14 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DragEndEvent, useDroppable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import { PlusIcon } from "@radix-ui/react-icons";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useTasks } from "@/app/store/tasksContext";
 
 import TaskCard from "./task-card";
-import TaksModal from "./task-modal";
+import TaksModal from "../task-modal";
 
 import ColumnOptionsIcon from "@/public/column_options_icon.svg";
 

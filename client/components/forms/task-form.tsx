@@ -1,11 +1,10 @@
 "use client";
 
-import { z } from "zod";
-import { useRef } from "react";
 import { format } from "date-fns";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, PlusIcon } from "@radix-ui/react-icons";
+import { CalendarIcon, PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
 
 import {
   Form,
@@ -61,6 +60,8 @@ export default function TaskForm({
 }: TaskFormProps) {
   const { addTask, editTask } = useTasks();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -74,7 +75,8 @@ export default function TaskForm({
   const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
   function postResponse() {
-    form.reset(); // Reset the form
+    form.reset();
+    setIsLoading(false);
 
     // Close the sheet
     if (sheetCloseRef.current) {
@@ -83,6 +85,8 @@ export default function TaskForm({
   }
 
   async function onSubmit(data : any) {
+    setIsLoading(true);
+
     if (task?.id) {
       data = { ...data, id: task.id, created_at: task.created_at } as Task;
     } else {
@@ -274,7 +278,8 @@ export default function TaskForm({
           </Tooltip>
         </TooltipProvider>
 
-        <Button type="submit" className="mt-auto">
+        <Button type="submit" className="mt-auto" disabled={isLoading}>
+          {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Submit
         </Button>
 

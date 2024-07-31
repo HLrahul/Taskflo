@@ -1,15 +1,19 @@
 "use client";
 
 import axios from "axios";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
-import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
-import { ThemeToggle } from "../theme-toggle";
-import { useUser } from "@/app/store/userContext";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import MenuItem from "./menu_item";
+import MenuItem from "../menu_item";
+import TaksModal from "../task-modal";
+
+import { useUser } from "@/app/store/userContext";
 
 import AddIcon from "@/public/add_icon.svg";
 import BellIcon from "@/public/bell_icon.svg";
@@ -20,14 +24,16 @@ import ForwardIcon from "@/public/forward_icon.svg";
 import DownloadIcon from "@/public/download_icon.svg";
 import SettingsIcon from "@/public/settings_icon.svg";
 import AnalyticsIcon from "@/public/analytics_icon.svg";
-import TaksModal from "./task-modal";
 
 export default function Profile() {
   const router = useRouter();
   const { toast } = useToast();
   const { userName, setUserName } = useUser();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleLogout = async () => {
+    setIsLoading(true);
     await axios.post(`/api/logout`);
 
     toast({
@@ -36,6 +42,7 @@ export default function Profile() {
     });
     
     router.push("/login");
+    setIsLoading(false);
     setUserName("");
   };
 
@@ -63,12 +70,14 @@ export default function Profile() {
         </div>
 
         <Button
+          disabled={isLoading}
           variant="ghost"
           className="bg-foreground/5 text-gray-500"
           onClick={(e) => {
             handleLogout();
           }}
         >
+          { isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> }
           Logout
         </Button>
       </div>

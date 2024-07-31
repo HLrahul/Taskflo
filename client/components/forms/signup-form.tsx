@@ -84,7 +84,11 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input
+                  placeholder="Username"
+                  {...field}
+                  className="border-gray-300 text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -96,7 +100,11 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Email" {...field} />
+                <Input
+                  placeholder="Email"
+                  {...field}
+                  className="border-gray-300 text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,7 +116,12 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...field}
+                  className="border-gray-300 text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +133,7 @@ export default function SignUpForm() {
           type="submit"
           className="w-full hover:bg-gradient-taskflo-button bg-gradient-taskflo-hover-button text-white mt-3"
         >
-          { isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> }
+          {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Sign up
         </Button>
       </form>

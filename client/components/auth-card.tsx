@@ -14,10 +14,10 @@ import SignUpForm from "./forms/signup-form";
 
 export default function AuthCard({ type }: { type: "login" | "signup" }) {
   return (
-    <Card className="w-[360px] md:w-[546px] lg:w-[546px] p-4">
+    <Card className="w-[360px] md:w-[546px] lg:w-[546px] p-4 bg-white border-white">
       <CardHeader>
         <CardTitle
-          className={`w-full flex align-center justify-center ${barlow.className} text-3xl tracking-normal`}
+          className={`w-full flex align-center justify-center ${barlow.className} text-3xl tracking-normal text-black`}
         >
           Welcome to <p className="text-taskflo-text ml-1">Taskflo</p> !
         </CardTitle>
@@ -25,7 +25,7 @@ export default function AuthCard({ type }: { type: "login" | "signup" }) {
       <CardContent>
         {type === "login" ? <LoginForm /> : <SignUpForm />}
       </CardContent>
-      <CardFooter className="w-full flex items-center justify-center">
+      <CardFooter className="w-full flex items-center justify-center text-black">
         {type === "login" ? (
           <p className="text-sm">
             Don&apos;t have an account? Create a{" "}

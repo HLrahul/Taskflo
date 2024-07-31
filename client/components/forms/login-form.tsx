@@ -4,6 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,7 +21,6 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { useUser } from "@/app/store/userContext";
 import { loginSchema, LoginSchema } from "@/validation/loginSchema";
-import { ReloadIcon } from "@radix-ui/react-icons";
 
 async function handleLogin(data: LoginSchema) {
   const response = await axios.post(`/api/login`, data);
@@ -57,8 +57,8 @@ export default function LoginForm() {
     onError: (res: any) => {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong",
-        description: res.message,
+        title: res.response.data.message,
+        description: `${res.response.data.message === "User doesn't exists" ? "Enter a valid user email" : "Please try again" }`,
       });
 
       setIsLoading(false);
@@ -83,7 +83,11 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Email" {...field} />
+                <Input
+                  placeholder="Email"
+                  {...field}
+                  className="border-gray-300 text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,7 +99,12 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...field}
+                  className="border-gray-300 text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
