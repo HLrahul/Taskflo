@@ -15,7 +15,7 @@ const app = (0, express_1.default)();
 dotenv_1.default.config();
 const port = process.env.PORT || 3001;
 const corsOptions = {
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions)); // Middleware to enable CORS
