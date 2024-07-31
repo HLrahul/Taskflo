@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useDraggable } from "@dnd-kit/core";
+import { formatDistanceToNowStrict } from "date-fns";
 
 import {
   LowPriorityTag,
@@ -74,7 +75,7 @@ export default function TaskCard({
           )}
           {created_at && (
             <p className="text-gray-400 text-xs">
-              {created_at.toLocaleDateString("en-CA")}
+              {formatDistanceToNowStrict(new Date(created_at), { addSuffix: true })}
             </p>
           )}
         </div>
