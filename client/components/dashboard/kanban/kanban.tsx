@@ -13,7 +13,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import { KanbanColumn } from "./kanban-column";
 
@@ -55,62 +55,83 @@ export default function Kanban() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-
     const { id: activeId } = active;
     const { id: overId } = over;
 
-    if (activeId !== overId) {
-      setTasks((prevTasks) => {
-        const activeColumn = Object.keys(prevTasks).find((key) =>
-          prevTasks[key].some((task) => task.id === activeId)
-        );
-        const overColumn =
-          Object.keys(prevTasks).find((key) =>
-            prevTasks[key].some((task) => task.id === overId)
-          ) || overId;
+    if (activeId === overId) {
+      return;
+    }
 
-        if (!activeColumn) {
-          return prevTasks;
-        }
+    setTasks((prevTasks) => {
+      const activeColumn = Object.keys(prevTasks).find((key) =>
+        prevTasks[key].some((task) => task.id === activeId)
+      );
+      const overColumn =
+        Object.keys(prevTasks).find((key) =>
+          prevTasks[key].some((task) => task.id === overId)
+        ) || overId;
 
-        const activeTask = prevTasks[activeColumn].find(
+      if (!activeColumn) {
+        return prevTasks;
+      }
+
+      const activeTask = prevTasks[activeColumn].find(
+        (task) => task.id === activeId
+      );
+
+      if (!activeTask) {
+        return prevTasks;
+      }
+
+      if (activeColumn === overColumn) {
+        const sourceIndex = prevTasks[activeColumn].findIndex(
           (task) => task.id === activeId
         );
-        if (!activeTask) {
-          return prevTasks;
-        }
-
-        const activeItems = prevTasks[activeColumn].filter(
-          (task) => task.id !== activeId
+        const destinationIndex = prevTasks[overColumn].findIndex(
+          (task) => task.id === overId
         );
-        let overItems = prevTasks[overColumn] || [];
 
-        const updatedTask = {
-          ...activeTask,
-          status: overColumn.toString() as
-            | "todo"
-            | "in_progress"
-            | "under_review"
-            | "finished",
-        };
-        if (activeColumn !== overColumn) {
-          if (!isEditCalled.current) {
-            editTask(updatedTask, true);
-            isEditCalled.current = true;
-          }
-
-          overItems = prevTasks[overColumn]
-            ? [...prevTasks[overColumn], updatedTask]
-            : [activeTask];
-        }
+        const updatedColumn = arrayMove(
+          prevTasks[activeColumn],
+          sourceIndex,
+          destinationIndex
+        );
 
         return {
           ...prevTasks,
-          [activeColumn]: activeItems,
-          [overColumn]: overItems,
+          [activeColumn]: updatedColumn,
         };
-      });
-    }
+      }
+
+      const activeItems = prevTasks[activeColumn].filter(
+        (task) => task.id !== activeId
+      );
+      let overItems = prevTasks[overColumn] || [];
+      const updatedTask = {
+        ...activeTask,
+        status: overColumn.toString() as
+          | "todo"
+          | "in_progress"
+          | "under_review"
+          | "finished",
+      };
+
+      if (activeColumn !== overColumn) {
+        if (!isEditCalled.current) {
+          editTask(updatedTask, true);
+          isEditCalled.current = true;
+        }
+        overItems = prevTasks[overColumn]
+          ? [...prevTasks[overColumn], updatedTask]
+          : [activeTask];
+      }
+
+      return {
+        ...prevTasks,
+        [activeColumn]: activeItems,
+        [overColumn]: overItems,
+      };
+    });
 
     setActiveTask(null);
   };
