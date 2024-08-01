@@ -8,6 +8,13 @@ A full stack web application for task management.
 | --- | --- |
 | ![Light mode](media/light%20mode.png) | ![Dark mode](media/dark%20mode.png) |
 
+## Live demo
+
+<video width="100%" controls>
+  <source src="media/demo.webm" type="video/webm">
+  Your browser does not support video.
+</video>
+
 ## Local setup
 
 ### .env file structure
@@ -36,10 +43,10 @@ git clone https://github.com/HLrahul/Taskflo.git
 cd taskflo
 ```
 
-### Step 2 - Install deps for server and run
+### Step 2 - Install deps for client and run
 
 ```bash
-cd server
+cd client
 
 npm i
 
@@ -53,10 +60,10 @@ npm run build
 npm start
 ```
 
-### Step 3 - Install deps for client and run
+### Step 3 - Install deps for server and run
 
 ```bash
-cd client
+cd server
 
 npm i
 
