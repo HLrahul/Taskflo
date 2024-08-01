@@ -8,12 +8,7 @@ A full stack web application for task management.
 | --- | --- |
 | ![Light mode](media/light%20mode.png) | ![Dark mode](media/dark%20mode.png) |
 
-## Live demo
-
-<video width="100%" controls>
-  <source src="media/demo.webm" type="video/webm">
-  Your browser does not support video.
-</video>
+### Live demo - https://taskflo.vercel.app/
 
 ## Local setup
 
